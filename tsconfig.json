@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ES2021",         /* Specify your target ECMAScript version */
+      "module": "CommonJS",       /* Specify the module system you are using (e.g., CommonJS, ES6) */
+      "outDir": "./dist",         /* Specify the output directory for compiled JavaScript files */
+      "rootDir": "./src",         /* Specify the root directory of your source TypeScript files */
+      "strict": true,             /* Enable strict type checking */
+      "esModuleInterop": true     /* Allow compatibility with ES modules */
+    },
+    "include": [
+      "src/**/*.ts" 
+    ],
+    "exclude": [
+      "node_modules"             /* Specify directories to exclude from compilation (e.g., node_modules) */
+    ]
+}
+  
