@@ -36,10 +36,32 @@ const joi_1 = __importDefault(require("joi"));
 const node_cache_1 = __importDefault(require("node-cache"));
 const server_1 = require("@apollo/server");
 const express4_1 = require("@apollo/server/express4");
+const http_1 = __importDefault(require("http"));
+const path_1 = __importDefault(require("path"));
+const socket_io_1 = require("socket.io");
 dotenv_1.default.config();
 async function startServer() {
     const app = (0, express_1.default)();
+    const httpServer = http_1.default.createServer(app);
     const cache = new node_cache_1.default();
+    const io = new socket_io_1.Server(httpServer);
+    io.use(async (socket, next) => {
+        try {
+            const token = socket.handshake.auth.token;
+            await jsonwebtoken_1.default.verify(token, `${process.env.SECRET_KEY}`);
+            next();
+        }
+        catch (error) {
+            next(new Error("Invalid token provided"));
+        }
+    });
+    io.on('connection', (socket) => {
+        socket.join("raftlabs updates");
+        io.to("raftlabs updates").emit("raftlabs updates", `${socket.id} joined raftlabs updates`);
+        socket.on('user-message', (message) => {
+            io.emit("message", message);
+        });
+    });
     const server = new server_1.ApolloServer({
         typeDefs: `
       type GeneralResponse {
@@ -160,8 +182,6 @@ async function startServer() {
         email: joi_1.default.string().email().required(),
         password: joi_1.default.string().min(6).required(),
     });
-    function createUser(name, email, password) {
-    }
     app.post('/create-user', async (req, res) => {
         try {
             const { error, value } = createUserSchema.validate(req.body);
@@ -246,8 +266,12 @@ async function startServer() {
     app.get('/', verifyToken, (req, res) => {
         return res.json({ message: messageForHome() });
     });
+    app.use(express_1.default.static(path_1.default.resolve("./public")));
+    app.get('/chatting-app', (req, res) => {
+        return res.sendFile(path_1.default.resolve('./public/index.html'));
+    });
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
     });
 }

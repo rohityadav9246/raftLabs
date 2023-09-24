@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Chatting</h1>
+    
+    <input type="text" id="message" placeholder="Enter Message" />
+    <button id="sendBtn">Send</button>
+
+    <div id="messages">
+        <h3>Recieved messages: <h3> 
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+            const socket = io({
+                auth: {
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9Vc2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5NTU3NjYwOCwiZXhwIjoxNjk1NTgwMjA4fQ.nmvTWWSoBA9eGfxc6BrAqRu4_D5pQPW6gsAdVYWHVO4",
+                }
+            });
+            const sendBtn = document.getElementById('sendBtn');
+            const messageInput = document.getElementById('message');
+            const allMessages = document.getElementById('messages');
+
+            socket.on('raftlabs updates', update => {
+                const p = document.createElement("p");
+                p.innerText = update;
+                allMessages.appendChild(p);
+            });
+
+            socket.on('message', message => {
+                const p = document.createElement("p");
+                p.innerText = message;
+                allMessages.appendChild(p);
+            });
+            socket.on("connect_error", (err) => {
+                console.log(err.message);
+            });
+
+            sendBtn.addEventListener("click", (e)=>{
+                const message = messageInput.value;
+                socket.emit('user-message', message);
+            })
+    </script>
+</body>
+</html>

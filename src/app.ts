@@ -8,13 +8,37 @@ import Joi from 'joi';
 import NodeCache from 'node-cache';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
+import http from 'http';
+import path from 'path';
+import {Server, Socket} from 'socket.io';
 dotenv.config();
 
 async function startServer() {
   
   const app: Express = express();
+  const httpServer = http.createServer(app);
   const cache = new NodeCache();
+  const io = new Server(httpServer);
+
+  io.use(async (socket, next)=>{
+    try{
+      const token = socket.handshake.auth.token;
+      await jwt.verify(token, `${process.env.SECRET_KEY}`);  
+      next();
+    }catch(error){
+      next(new Error("Invalid token provided"));
+    }
+  });
+
+  io.on('connection', (socket)=>{
+    socket.join("raftlabs updates");
+    io.to("raftlabs updates").emit("raftlabs updates", `${socket.id} joined raftlabs updates`);
+    socket.on('user-message', (message)=>{
+      io.emit("message", message);
+    });
+  });
   
+
   const server = new ApolloServer({
     typeDefs: `
       type GeneralResponse {
@@ -172,10 +196,6 @@ async function startServer() {
     password: Joi.string().min(6).required(),
   });
 
-  function createUser(name: String, email: String, password: String): void{
-
-  }
-
   app.post('/create-user', async (req: CreateUserRequest, res: CreateUserResponse): Promise<CreateUserResponse> => {
     try {
       const { error, value } = createUserSchema.validate(req.body);
@@ -304,8 +324,13 @@ async function startServer() {
     return res.json({message: messageForHome()});
   });
 
+  app.use(express.static(path.resolve("./public")));
+  app.get('/chatting-app', (req, res)=>{
+    return res.sendFile(path.resolve('./public/index.html'));
+  });
+
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 
