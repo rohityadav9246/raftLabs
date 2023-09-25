@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "a694c9a8-87ff-4c0d-93e4-3a72f540e3d0",
+		"name": "RaftLabs Assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "21648073"
+	},
+	"item": [
+		{
+			"name": "{{base_url}}/create-user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"demoUser2@gmail.com\",\r\n    \"password\": \"password\",\r\n    \"name\": \"demoUser\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/create-user"
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"demoUser@gmail.com\",\r\n    \"password\": \"password\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "video",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9Vc2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5NTYzNTQyOCwiZXhwIjoxNjk1NjM5MDI4fQ.qyEhOc7jJHel6e3ZWWYtybqCqWa4A1_DrospWW6FYgo"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9Vc2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5NTYzNTQyOCwiZXhwIjoxNjk1NjM5MDI4fQ.qyEhOc7jJHel6e3ZWWYtybqCqWa4A1_DrospWW6FYgo",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": "{{base_url}}/"
+			},
+			"response": []
+		},
+		{
+			"name": "{{base_url}}/chatting-app",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/chatting-app"
+			},
+			"response": []
+		}
+	]
+}
