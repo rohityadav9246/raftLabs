@@ -263,7 +263,7 @@ async function startServer() {
       }
 
       type Query {
-        home(token: String!): GeneralResponse
+        getMessage(token: String!): GeneralResponse
       }
       type Mutation{
         createUser(name: String!, email: String!, password: String! ): GeneralResponse
@@ -272,7 +272,7 @@ async function startServer() {
     `,
         resolvers: {
             Query: {
-                home: async (_, { token }) => {
+                getMessage: async (_, { token }) => {
                     try {
                         // @ts-ignore
                         const user = await jsonwebtoken_1.default.verify(token, `${process.env.SECRET_KEY}`);
